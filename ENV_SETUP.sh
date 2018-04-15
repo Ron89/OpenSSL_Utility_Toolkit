@@ -1,0 +1,7 @@
+# ------------ for installation
+OPENSSL_VERSION="1.1.0h"
+SHA_ALGORITHM="256"
+CHOSEN_ARCH="linux-x86_64"
+THREAD_COUNT=9
+
+PREFIX="$HOME/OpenSSL-$OPENSSL_VERSION"
