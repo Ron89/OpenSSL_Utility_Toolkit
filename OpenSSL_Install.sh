@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# This script is released under MIT License
+# Maintainer: HE Chong
+
 # Thanks to Dave Dopson for the solution of obtaining script directory
 function SCRIPT_LOC
 {
@@ -100,16 +103,18 @@ if [ ! -d $BUILD_DIR ]; then
     mkdir -p $BUILD_DIR
 fi
 
-echo "Fetch PGP Signature"
-curl $OPENSSL_PGP_SIGN_SOURCE 2>/dev/null > $BUILD_DIR/openssl-$OPENSSL_VERSION.tar.gz.asc
-if CHECK_DOWNLOAD  \
-    `cat $BUILD_DIR/openssl-$OPENSSL_VERSION.tar.gz.asc | xxd -p | tr -d "\n"`
-then
-    echo "Signature fetched:"
-    cat $BUILD_DIR/openssl-$OPENSSL_VERSION.tar.gz.asc
-else
-    printf "Failed to download Signature from:\
-    \n    $OPENSSL_SHASUM_SOURCE \n" && exit -1
+if [ "${REQUIRE_AUTHENTICITY}" -eq 1 ]; then
+    echo "Fetch PGP Signature"
+    curl $OPENSSL_PGP_SIGN_SOURCE 2>/dev/null > $BUILD_DIR/openssl-$OPENSSL_VERSION.tar.gz.asc
+    if CHECK_DOWNLOAD  \
+        `cat $BUILD_DIR/openssl-$OPENSSL_VERSION.tar.gz.asc | xxd -p | tr -d "\n"`
+    then
+        echo "Signature fetched:"
+        cat $BUILD_DIR/openssl-$OPENSSL_VERSION.tar.gz.asc
+    else
+        printf "Failed to download Signature from:\
+        \n    $OPENSSL_SHASUM_SOURCE \n" && exit -1
+    fi
 fi
 
 echo
@@ -122,8 +127,13 @@ then
     echo Check Package integrity
     CHECK_SHASUM "$BUILD_DIR/openssl-$OPENSSL_VERSION.tar.gz" ${OPENSSL_SHASUM}
 
-    echo Check Package authenticity
-    CHECK_AUTHENTICITY "$BUILD_DIR/openssl-$OPENSSL_VERSION.tar.gz" "$BUILD_DIR/openssl-$OPENSSL_VERSION.tar.gz.asc"
+    if [ "${REQUIRE_AUTHENTICITY}" -eq 1 ]; then
+        echo Check Package authenticity
+        CHECK_AUTHENTICITY "$BUILD_DIR/openssl-$OPENSSL_VERSION.tar.gz" "$BUILD_DIR/openssl-$OPENSSL_VERSION.tar.gz.asc"
+    else
+        echo "WARNING: Authenticity Verification bypassed by user setting!"
+        sleep $SLEEP_TIME
+    fi
 else
     printf "Failed to download package from:\
     \n    $OPENSSL_DOWNLOAD_SOURCE \n" && exit -1

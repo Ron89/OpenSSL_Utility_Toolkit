@@ -4,6 +4,8 @@ SHA_ALGORITHM="256"
 CHOSEN_ARCH="linux-x86_64" # for Linux 64bit
 # CHOSEN_ARCH="darwin64-x86_64-cc" # for Mac OS 64bit
 THREAD_COUNT=9
+# If authenticity shall be checked, 1 is yes, 0 is no
+REQUIRE_AUTHENTICITY=1
 
 PREFIX="$HOME/OpenSSL-$OPENSSL_VERSION"
 
