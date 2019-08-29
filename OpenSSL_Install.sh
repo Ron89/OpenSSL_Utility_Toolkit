@@ -149,8 +149,6 @@ tar -xf openssl-$OPENSSL_VERSION.tar.gz || exit 1
 echo enter $BUILD_DIR/openssl-$OPENSSL_VERSION
 cd openssl-$OPENSSL_VERSION || exit 1
 
-make dclean >/dev/null
-make clean >/dev/null
 printf "#---------------Begin Configure\n" >../$BUILD_LOG
 printf "#---------------Begin Configure\n" >../$ERROR_LOG
 chmod +x ./Configure
@@ -160,6 +158,10 @@ echo "$CONFIG_CMD" >> ../$BUILD_LOG
 ./Configure ${OPENSSL_CONFIGURE_ARGUMENTS[@]} >>../$BUILD_LOG 2>>../$ERROR_LOG || exit 1
 printf "#---------------End of Configure\n" >>../$BUILD_LOG
 printf "#---------------End of Configure\n" >>../$ERROR_LOG
+
+echo clean existing build
+make clean >/dev/null
+echo 
 
 echo make dependencies
 printf "\n#---------------Begin Make Depend\n" >>../$BUILD_LOG
